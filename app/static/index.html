@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreatLens AI — Analyst Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>ThreatLens AI</h1>
+      <span class="subtitle">Analyst Dashboard</span>
+    </div>
+    <div class="header-right">
+      <label>API Base</label>
+      <input id="api-base" value="" placeholder="http://localhost:8000">
+      <label>API Key</label>
+      <input id="api-key" type="password" placeholder="dev-key-change-me">
+      <button id="btn-save-config">Save</button>
+      <span id="conn-status" class="conn-badge">—</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Stats -->
+    <section class="stats-row">
+      <div class="stat-card" id="stat-total-alerts"><span class="stat-label">Total Alerts</span><span class="stat-value">—</span></div>
+      <div class="stat-card" id="stat-total-incidents"><span class="stat-label">Total Incidents</span><span class="stat-value">—</span></div>
+      <div class="stat-card" id="stat-active-incidents"><span class="stat-label">Active Incidents</span><span class="stat-value">—</span></div>
+      <div class="stat-card" id="stat-critical"><span class="stat-label">CRITICAL</span><span class="stat-value">—</span></div>
+      <div class="stat-card" id="stat-high"><span class="stat-label">HIGH</span><span class="stat-value">—</span></div>
+      <div class="stat-card" id="stat-medium"><span class="stat-label">MEDIUM</span><span class="stat-value">—</span></div>
+    </section>
+
+    <!-- Prediction panel -->
+    <section class="card" id="prediction-panel">
+      <h2>Predict Flow</h2>
+      <div class="sample-buttons">
+        <button class="btn btn-danger" id="btn-sample-attack">Load Sample Attack</button>
+        <button class="btn btn-success" id="btn-sample-benign">Load Sample Benign</button>
+      </div>
+      <label>Feature JSON</label>
+      <textarea id="flow-json" rows="10" spellcheck="false"></textarea>
+      <div class="predict-controls">
+        <button class="btn btn-primary" id="btn-predict">Run Prediction</button>
+        <label><input type="checkbox" id="chk-explain" checked> Explain (SHAP)</label>
+        <label><input type="checkbox" id="chk-advisory" checked> Advisory (GenAI)</label>
+      </div>
+    </section>
+
+    <!-- Prediction result -->
+    <section class="card" id="result-panel" style="display:none">
+      <h2>Prediction Result</h2>
+      <div id="result-threat" class="result-threat"></div>
+      <div class="result-grid">
+        <div class="result-box" id="result-explain"><h3>SHAP — Feature Contributions</h3><div class="shap-bars"></div><div class="evidence"></div></div>
+        <div class="result-box" id="result-advisory"><h3>AI Incident Summary</h3><div class="advisory-text"></div></div>
+        <div class="result-box full" id="result-actions"><h3>Recommended Defensive Actions</h3><ul class="action-list"></ul></div>
+        <div class="result-box" id="result-alert-link"></div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section class="charts-row">
+      <div class="card chart-card"><h2>Attack Distribution</h2><canvas id="chart-distribution"></canvas></div>
+      <div class="card chart-card"><h2>Alert Timeline</h2><canvas id="chart-timeline"></canvas></div>
+    </section>
+
+    <!-- Top Attackers -->
+    <section class="card">
+      <h2>Top Attackers (24 h)</h2>
+      <table id="table-attackers" class="data-table"><thead><tr><th>Source IP</th><th>Alerts</th><th>Attack Types</th><th>Max Severity</th></tr></thead><tbody></tbody></table>
+    </section>
+
+    <!-- Recent Alerts -->
+    <section class="card">
+      <h2>Recent Alerts</h2>
+      <table id="table-alerts" class="data-table"><thead><tr><th>ID</th><th>Attack</th><th>Severity</th><th>Source IP</th><th>Confidence</th><th>Time</th><th>Ack</th></tr></thead><tbody></tbody></table>
+    </section>
+
+    <!-- Incidents -->
+    <section class="card">
+      <h2>Incidents</h2>
+      <div id="incident-detail"></div>
+      <table id="table-incidents" class="data-table"><thead><tr><th>ID</th><th>Title</th><th>Severity</th><th>Status</th><th>Alerts</th><th>Created</th><th>Detail</th></tr></thead><tbody></tbody></table>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

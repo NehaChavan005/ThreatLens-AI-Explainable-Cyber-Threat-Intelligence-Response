@@ -1,0 +1,16 @@
+{
+  "source": "ML-IDS UNIFIED_MODEL.md (docs/UNIFIED_MODEL.md) - class id -> label",
+  "note": "Edit labels here to match the Label.csv encoding used at training time. The FT-Transformer checkpoint saves numeric class ids (0-9); this table maps them to human-readable attack labels for alerting and GenAI advisory.",
+  "labels": [
+    "Benign",
+    "Analysis",
+    "Backdoor",
+    "DoS",
+    "Exploits",
+    "Fuzzers",
+    "Generic",
+    "Reconnaissance",
+    "Shellcode",
+    "Worms"
+  ]
+}

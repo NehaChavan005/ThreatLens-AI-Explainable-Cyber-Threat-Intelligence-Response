@@ -1,0 +1,35 @@
+# Runtime state — never commit
+mlids.db
+*.db
+logs/
+*.log
+
+# Secrets — never commit real credentials
+app/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Test tooling
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# OSEdge / misc
+.python-version
+
+# Bob's upstream reference repos (kept locally for reference only —
+# reconstruct from https://github.com/RobertoDeLaCamara/ML-IDS and
+# https://github.com/robbinson10/GenAI-IDS — 2.4 GB, not part of the prototype)
+ML-IDS-main/
+GenAI-IDS-main/
