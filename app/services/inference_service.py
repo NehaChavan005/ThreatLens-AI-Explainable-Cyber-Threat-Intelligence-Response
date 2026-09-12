@@ -15,6 +15,7 @@ per-class probabilities, is_attack, backend name).
 
 import json
 import logging
+import re
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -104,6 +105,20 @@ _DEFAULT_CLASS_LABELS = [
 ]
 
 _PERSISTENT_ATTACK_BACKENDS = {"xgboost", "ft_transformer"}
+
+
+def _sanitize_label(label: str) -> str:
+    """Repair label encoding corruption (U+FFFD) from the pickled encoder.
+
+    The GenAI-augmented XGBoost label encoder was serialized with non-ASCII
+    dashes that later decoded as the Unicode replacement character, producing
+    names such as ``Web Attack \ufffd Brute Force``. Rewrite them to clean
+    ASCII so class names, severity mapping and playbook lookup work.
+    """
+    if not label:
+        return label
+    cleaned = label.replace("\ufffd", " ").replace("\ufeff", "")
+    return re.sub(r"\s+", " ", cleaned).strip()
 
 
 # =============================================================================
@@ -255,7 +270,7 @@ class InferenceService:
             # Keep the exact column order the scaler was fit on.
             self.feature_names = list(self.scaler.feature_names_in_)
             self.feature_map = self.feature_map_genai
-            self.class_labels = list(self.label_encoder.classes_)
+            self.class_labels = [_sanitize_label(str(c)) for c in self.label_encoder.classes_]
             self.model_source = f"xgboost:{model_path.name}"
             self.model_loaded_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
             self._build_column_dict()

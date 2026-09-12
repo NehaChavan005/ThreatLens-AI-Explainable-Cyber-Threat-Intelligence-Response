@@ -13,6 +13,7 @@ changes happen automatically.
 """
 
 import logging
+import re
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..schemas.responses import DefensiveAction
@@ -316,8 +317,18 @@ _PLAYBOOKS: Dict[str, List[ActionSpec]] = {
 class DefensiveActionService:
     """Translate a prediction into analyst-approved defensive guidance."""
 
+    @staticmethod
+    def _norm(value: str) -> str:
+        """Fold a class name to its lookup key: lowercase, strip punctuation."""
+        return re.sub(r"[^a-z0-9 ]", "", (value or "").strip().lower())
+
     def category_for(self, class_name: str) -> str:
-        return _ATTACK_CATEGORIES.get((class_name or "").strip().lower(), "benign")
+        cached = getattr(self, "_norm_categories", None)
+        if cached is None:
+            cached = self._norm_categories = {
+                self._norm(k): v for k, v in _ATTACK_CATEGORIES.items()
+            }
+        return cached.get(self._norm(class_name), "benign")
 
     def supported_attack_classes(self) -> List[str]:
         """Attack classes the current model can actually detect."""
